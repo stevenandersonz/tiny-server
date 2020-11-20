@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <string>
+#include <string.h>
 #include <iostream>
 #include <arpa/inet.h>
 #define PORT 8080
@@ -9,7 +9,7 @@
 int main (){
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
-    char const *hello = "hello from client";
+    char msg[1024]; 
     char buffer[1024] = {0};
     if((sock = socket(AF_INET, SOCK_STREAM, 0 ))<0){
         printf("\n Socket creation error \n");
@@ -28,10 +28,18 @@ int main (){
         printf("\nConnection Failed \n");
         return -1;
     }
-    send(sock, hello, strlen(hello),0);
-    printf("hello message sent\n");
-    valread =read(sock, buffer,1024);
-    printf("%s\n", buffer);
+    int count = 0;
+    while(true){
+    	std::cout << "To send a message first write it and then press enter...\n";
+	std::cin >> msg;
+	if(msg[0]== '.') break;
+	std::cout << "\n Message Sent";
+    	send(sock, msg, strlen(msg),0);
+    	valread = read(sock, buffer,1024);
+    	printf("%s\n", buffer);
+	memset(msg, 0, 1024);
+	memset(buffer, 0, 1024);
+    }
     return 0;
 
 }
